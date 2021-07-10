@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import MakeCall from './MakeCall/MakeCall'
+import { initializeIcons } from '@uifabric/icons';
+
+initializeIcons();
+
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="header ms-Grid">
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col ms-lg6">
+            <h2>
+              Microsoft Teams Clone
+            </h2>
+          </div>
+
+        </div>
+      </div>
+      <MakeCall />
     </div>
   );
 }
