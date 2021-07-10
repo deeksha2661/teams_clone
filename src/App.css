@@ -215,7 +215,8 @@ ul {
     flex: 0.25 1;
     width: 25%;
     max-height: inherit;
-    overflow: auto;;
+    overflow: auto;
+    overflow-x: hidden;
 }
 
 /* Dominant Speaker switch*/
@@ -234,6 +235,24 @@ ul {
   flex-grow: 1;
 }
 
+#chat-list {
+  padding-left: 0px;
+  border: 1px solid #201f1e;
+  overflow-x: hidden;
+
+}
+
+#chat-list li {
+  text-align: left;
+  padding: 5px ;
+  word-wrap: break-word;
+
+}
+
+#chat-list li:hover {
+  background-color: #201f1e;
+
+}
 /* Participants panel */
 
 .participants {

@@ -12,35 +12,48 @@ export default class Chat extends React.Component {
 
         this.state = {
             message: undefined,
-            chatMessegeIdList: []
+            chatMessegeIdList: props.chatMessegeIdList,
+            firstCall: props.firstCall
         };
     }
 
     async componentDidMount() {
-        this.chatClient.on("chatMessageReceived", async (e) => {
-            console.log("Notification chatMessageReceived!");
 
-            // const listChatThread = this.chatClient.listChatThreads();
-            // console.log(listChatThread);
-            // for await (const thread of this.chatClient.listChatThreads()) {
-            //     const chatThreadClient = this.chatClient.getChatThreadClient(thread.id);
-            //     for await (const message of chatThreadClient.listMessages()) {
-            //         console.log("lol");
-            //         if (!this.state.chatMessegeIdList.includes(message.id)) {
-            //             this.handleReceiveMsg(message);
-            //             this.setState(prevState => ({
-            //                 chatMessegeIdList: [message.id, ...prevState.chatMessegeIdList]
-            //             }));
-            //         }
-            //     }
-            // }
+        this.chatClient.on("chatMessageReceived", async () => {
+            console.log("Notification chatMessageReceived!");
+            if (this.state.firstCall) {
+                await this.addInitialChats();
+                this.setState({ firstCall: false });
+                console.log("first", this.state.chatMessegeIdList);
+            }
+            await this.addInitialChats();
         });
     }
+
+
+    addInitialChats = async () => {
+
+        for await (const thread of this.chatClient.listChatThreads()) {
+            const chatThreadClient = this.chatClient.getChatThreadClient(thread.id);
+            for await (const message of chatThreadClient.listMessages()) {
+                if (message.type === "text" && !this.state.chatMessegeIdList.includes(message.id)) {
+
+                    if (this.state.chatMessegeIdList.length !== 0)
+                        this.handleReceiveMsg(message);
+
+                    this.setState(prevState => ({
+                        chatMessegeIdList: [message.id, ...prevState.chatMessegeIdList]
+                    }));
+                }
+            }
+        }
+    }
+
 
     handleReceiveMsg = async (message) => {
         const li = document.createElement("li");
         if (message.content.message) {
-            li.innerHTML = `${message.senderDisplayName}\n${message.content.message}`;
+            li.innerHTML = `${message.senderDisplayName} :` + "<br />" + `${message.content.message}`;
             document.getElementById("chat-list").prepend(li);
         }
 
@@ -69,6 +82,7 @@ export default class Chat extends React.Component {
     render() {
         return (
             <>
+
                 <div className="ms-Grid add-participant">
                     <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-lg12">

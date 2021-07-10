@@ -24,6 +24,7 @@ export default class CallCard extends React.Component {
         this.deviceManager = props.deviceManager;
         this.id = props.id;
         this.displayName = props.displayName;
+        this.chatMessegeIdList = [];
         this.state = {
             callState: this.call.state,
             callId: this.call.id,
@@ -46,7 +47,9 @@ export default class CallCard extends React.Component {
             dominantSpeakerMode: false,
             dominantRemoteParticipant: undefined,
             showParticipants: false,
-            showChat: false
+            showChat: false,
+            firstCall: true,
+            chatMessegeIdList: []
         };
     }
 
@@ -141,7 +144,15 @@ export default class CallCard extends React.Component {
 
                 if (this.call.state === 'Disconnected') {
                     this.setState({ dominantRemoteParticipant: undefined });
+                    this.setState({ firstCall: true });
+                    this.setState({ chatMessegeIdList: [] });
                 }
+
+                if (this.call.state === 'Connected') {
+                    this.setState({ firstCall: true });
+                }
+
+
             }
 
             //callStateChanged();
@@ -185,6 +196,8 @@ export default class CallCard extends React.Component {
 
         }
     }
+
+
     addToChat = (participant) => {
         try {
             const addParticipantsRequest =
@@ -197,6 +210,7 @@ export default class CallCard extends React.Component {
                 ]
             };
             this.chatThreadClient.addParticipants(addParticipantsRequest);
+            //console.log("added new", this.chatThreadClient.listParticipants());
         } catch (e) {
             console.error("lol", e);
         }
@@ -368,7 +382,6 @@ export default class CallCard extends React.Component {
             }
             else {
                 if (this.state.showChat) {
-
                     this.setState({ showChat: false });
                 }
                 document.getElementById("chats").style.display = 'none';
@@ -723,6 +736,7 @@ export default class CallCard extends React.Component {
                         }
 
                         {
+                            this.call && this.call && this.call.state === 'Connected' &&
 
                             <div className="ms-Grid-col ms-sm12 ms-lg12 ms-xl12 ms-xxl3 chats" id="chats">
                                 <div className="participants-panel">
@@ -731,7 +745,9 @@ export default class CallCard extends React.Component {
                                         <Chat chatThreadClient={this.chatThreadClient}
                                             displayName={this.displayName}
                                             chatClient={this.chatClient}
-                                            showChat={this.state.showChat} />
+                                            showChat={this.state.showChat}
+                                            firstCall={this.state.firstCall}
+                                            chatMessegeIdList={this.chatMessegeIdList} />
                                     </div>
                                 </div>
                             </div>
