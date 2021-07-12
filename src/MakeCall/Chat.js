@@ -11,9 +11,7 @@ export default class Chat extends React.Component {
         this.displayName = props.displayName;
 
         this.state = {
-            message: undefined,
-            chatMessegeIdList: props.chatMessegeIdList,
-            firstCall: props.firstCall
+            chatMessageIdList: []
         };
     }
 
@@ -21,29 +19,22 @@ export default class Chat extends React.Component {
 
         this.chatClient.on("chatMessageReceived", async () => {
             console.log("Notification chatMessageReceived!");
-            if (this.state.firstCall) {
-                await this.addInitialChats();
-                this.setState({ firstCall: false });
-                console.log("first", this.state.chatMessegeIdList);
-            }
-            await this.addInitialChats();
+            await this.addChats();
         });
     }
 
 
-    addInitialChats = async () => {
+    addChats = async () => {
 
         for await (const thread of this.chatClient.listChatThreads()) {
             const chatThreadClient = this.chatClient.getChatThreadClient(thread.id);
             for await (const message of chatThreadClient.listMessages()) {
-                if (message.type === "text" && !this.state.chatMessegeIdList.includes(message.id)) {
-
-                    if (this.state.chatMessegeIdList.length !== 0)
-                        this.handleReceiveMsg(message);
-
+                if (message.type === "text" && !this.state.chatMessageIdList.includes(message.id)) {
                     this.setState(prevState => ({
-                        chatMessegeIdList: [message.id, ...prevState.chatMessegeIdList]
+                        chatMessageIdList: [message.id, ...prevState.chatMessageIdList]
                     }));
+                    this.handleReceiveMsg(message);
+                    return;
                 }
             }
         }

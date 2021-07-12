@@ -24,7 +24,7 @@ export default class CallCard extends React.Component {
         this.deviceManager = props.deviceManager;
         this.id = props.id;
         this.displayName = props.displayName;
-        this.chatMessegeIdList = [];
+
         this.state = {
             callState: this.call.state,
             callId: this.call.id,
@@ -48,8 +48,7 @@ export default class CallCard extends React.Component {
             dominantRemoteParticipant: undefined,
             showParticipants: false,
             showChat: false,
-            firstCall: true,
-            chatMessegeIdList: []
+
         };
     }
 
@@ -144,13 +143,10 @@ export default class CallCard extends React.Component {
 
                 if (this.call.state === 'Disconnected') {
                     this.setState({ dominantRemoteParticipant: undefined });
-                    this.setState({ firstCall: true });
-                    this.setState({ chatMessegeIdList: [] });
+
                 }
 
-                if (this.call.state === 'Connected') {
-                    this.setState({ firstCall: true });
-                }
+
 
 
             }
@@ -736,7 +732,7 @@ export default class CallCard extends React.Component {
                         }
 
                         {
-                            this.call && this.call && this.call.state === 'Connected' &&
+                            this.call && this.call.state === 'Connected' &&
 
                             <div className="ms-Grid-col ms-sm12 ms-lg12 ms-xl12 ms-xxl3 chats" id="chats">
                                 <div className="participants-panel">
@@ -746,8 +742,7 @@ export default class CallCard extends React.Component {
                                             displayName={this.displayName}
                                             chatClient={this.chatClient}
                                             showChat={this.state.showChat}
-                                            firstCall={this.state.firstCall}
-                                            chatMessegeIdList={this.chatMessegeIdList} />
+                                        />
                                     </div>
                                 </div>
                             </div>
